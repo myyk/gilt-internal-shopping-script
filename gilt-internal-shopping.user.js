@@ -22,8 +22,8 @@ function addJQuery(callback) {
 function main() {
     function usePriceFromAdmin(element, productId) {
         console.log("created usePriceFromAdmin with " + productId);
-        return function(data) {
-            console.log("doing the thing with " + productId);
+        return function(data, foo, bar) {
+            console.log("the data = " + data);
             element.append("<p> productId = " + productId + "</p>");
         };
     }
@@ -31,10 +31,16 @@ function main() {
     function internalPrice(productId) {
         return function(index, element) {
             console.log("here");
-            $.get(
-                "/admin/product/show/" + productId,
-                usePriceFromAdmin(element, productId)
-            );
+            $.ajax({
+                url: "/admin/product/show/" + productId,
+                crossDomain: true,
+                dataType: "jsonp",
+                contentType: "text/html",
+                success: usePriceFromAdmin(element, productId),
+                error: function( jqXHR, textStatus, errorThrown) {
+                    console.log("Error!!!! " + jqXHR + textStatus + errorThrown)
+                }
+            });
         };
     }
 
