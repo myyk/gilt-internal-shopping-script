@@ -20,9 +20,34 @@ function addJQuery(callback) {
 }
 
 function main() {
+    function usePriceFromAdmin(element, productId) {
+        console.log("created usePriceFromAdmin with " + productId);
+        return function(data) {
+            console.log("doing the thing with " + productId);
+            element.append("<p> productId = " + productId + "</p>");
+        };
+    }
+
+    function internalPrice(productId) {
+        return function(index, element) {
+            $.get({
+                url: "http://www.google.com", //"https://admin.gilt.com/admin/product/show/" + productId,
+                success: usePriceFromAdmin(element, productId),
+                error: function() {console.log("fuck!")}
+            });
+        };
+    }
+
+    function addInternalPrice(index, element) {
+        var productId = $(this).find(".sku-selection").attr("data-gilt-product-id");
+        $(this).find(".pricing").each(internalPrice(productId));
+    }
+
     //product-look look product for_sale
     $(function() {
-        window.alert($(".product-look").text());
+        $(".product-look").each(addInternalPrice);
+        //$(".pricing").append(internalPrice);
+        //window.alert($(".sku-selection").attr("data-gilt-product-id").text());
     });
 }
 
