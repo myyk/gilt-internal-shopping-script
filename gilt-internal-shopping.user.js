@@ -30,11 +30,11 @@ function main() {
 
     function internalPrice(productId) {
         return function(index, element) {
-            $.get({
-                url: "http://www.google.com", //"https://admin.gilt.com/admin/product/show/" + productId,
-                success: usePriceFromAdmin(element, productId),
-                error: function() {console.log("fuck!")}
-            });
+            console.log("here");
+            $.get(
+                "/admin/product/show/" + productId,
+                usePriceFromAdmin(element, productId)
+            );
         };
     }
 
