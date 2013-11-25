@@ -11,11 +11,23 @@
 function addJQuery(callback) {
     var script = document.createElement("script");
     script.setAttribute("src", "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js");
+
+    function addMainScript() {
+        
+    };
+
     script.addEventListener('load', function() {
-        var script = document.createElement("script");
-        script.textContent = "window.jQ=jQuery.noConflict(true);(" + callback.toString() + ")();";
-        document.body.appendChild(script);
+        var cookieScript = document.createElement("script");
+        cookieScript.setAttribute("src", "//localhost:9000/assets/javascripts/jquery.cookies.2.2.0.min.js");
+        cookieScript.addEventListener('load', function() {
+            //var guid = $.cookies.get('guid');
+            var script = document.createElement("script");
+            script.textContent = "window.jQ=jQuery.noConflict(true);(" + callback.toString() + ")();";
+            document.body.appendChild(script);
+        }, false);
+        document.body.appendChild(cookieScript);
     }, false);
+    
     document.body.appendChild(script);
 }
 
@@ -23,19 +35,24 @@ function main() {
     function usePriceFromAdmin(element, productId) {
         console.log("created usePriceFromAdmin with " + productId);
         return function(data, foo, bar) {
-            console.log("the data = " + data);
-            element.append("<p> productId = " + productId + "</p>");
+            //TODO THIS IS WHERE YOU SHOULD START
+            var adminHtml = $.parseHTML(data.html);
+            debugger;
+            //var evenAndOdd = $(".odd,.even", adminHtml);
+            //debugger;
+            //console.log("the data = " + evenAndOdd);
+            //element.append("<p> productId = " + productId + "</p>");
         };
     }
 
     function internalPrice(productId) {
         return function(index, element) {
-            console.log("here");
+            //console.log("here cookie = " + guid);
             $.ajax({
-                url: "/admin/product/show/" + productId,
+                url: "http://localhost:9000/" + productId, //'proxies as jsonp': "/admin/product/show/" + productId,
                 crossDomain: true,
+                data: {"guid":"todo-remove"},
                 dataType: "jsonp",
-                contentType: "text/html",
                 success: usePriceFromAdmin(element, productId),
                 error: function( jqXHR, textStatus, errorThrown) {
                     console.log("Error!!!! " + jqXHR + textStatus + errorThrown)
